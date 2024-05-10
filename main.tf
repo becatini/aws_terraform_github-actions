@@ -8,36 +8,32 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-west-1"
+  region = var.aws_region
 }
 
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
   version = "5.8.1"
 
-  name = "vpc-eks"
-  cidr = "10.0.0.0/16"
+  name = var.aws_vpc_name
+  cidr = var.aws_vpc_cidr
 
-  azs             = ["us-west-1a", "us-west-1c"]
-  private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
-  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
+  azs             = var.aws_vpc_azs
+  private_subnets = var.aws_private_subnets
+  public_subnets  = var.aws_public_subnets
 
   enable_nat_gateway = true
   enable_vpn_gateway = false
 
-  tags = {
-    Terraform = "true"
-    Environment = "dev"
-    Project = "eks"
-  }
+  tags = var.aws_project_tags
 }
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "20.10.0"
 
-  cluster_name = "eks-dev"
-  cluster_version = "1.29"
+  cluster_name = var.aws_eks_name
+  cluster_version = var.aws_eks_version
 
   enable_cluster_creator_admin_permissions = true
 
@@ -51,7 +47,67 @@ module "eks" {
         min_size = 2
         max_size = 2
         desired_size = 2
-        instance_types=["t3.small"]
+        instance_types = var.aws_eks_managed_node_groups_instance_types
     }
   }
+}
+
+variable "aws_region" {
+  description = "AWS Region Used"
+  type = string
+  nullable = false
+}
+
+variable "aws_vpc_name" {
+  description = "AWS VPC Used"
+  type = string
+  nullable = false
+}
+
+variable "aws_vpc_cidr" {
+  description = "AWS VPC CIDR block"
+  type = string
+  nullable = false
+}
+
+variable "aws_vpc_azs" {
+  description = "AWS VPC AZs"
+  type = set(string)
+  nullable = false
+}
+
+variable "aws_private_subnets" {
+  description = "AWS Private Subnets"
+  type = set(string)
+  nullable = false
+}
+
+variable "aws_public_subnets" {
+  description = "AWS Public Subnets"
+  type = set(string)
+  nullable = false
+}
+
+variable "aws_eks_name" {
+  description = "AWS EKS Cluster Name"
+  type = string
+  nullable = false
+}
+
+variable "aws_eks_version" {
+  description = "AWS EKS Cluster Version"
+  type = string
+  nullable = false
+}
+
+variable "aws_eks_managed_node_groups_instance_types" {
+  description = "AWS EKS Cluster Instance Types"
+  type = set(string)
+  nullable = false
+}
+
+variable "aws_project_tags" {
+  description = "Project Tags"
+  type = map(any)
+  nullable = false
 }
