@@ -31,11 +31,13 @@ jobs:
           aws-region: us-west-1
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      
+          role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
+          role-session-name: TestSession            
+          
       # Action to check the code    
       - name: Checkout
-        uses: actions/checkout@v4
-
+        uses: actions/checkout@v4      
+      
       # Action to configure the S3 bucket repository to store the Terraform state
       - name: Terraform init
         working-directory: ./src
