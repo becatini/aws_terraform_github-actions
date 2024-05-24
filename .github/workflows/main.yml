@@ -39,7 +39,7 @@ jobs:
       # Action to configure the S3 bucket repository to store the Terraform state
       - name: Terraform init
         working-directory: ./src
-        run: terraform init -backend-config="${{ secrets.AWS_BUCKET_NAME }}" -backend-config="key=${{ secrets.AWS_BUCKET_FILE }}"
+        run: terraform init -backend-config="bucket=${{ secrets.AWS_BUCKET_NAME }}" -backend-config="key=${{ secrets.AWS_BUCKET_FILE }}"
 
       # Action to run terraform apply
       - name: Terraform apply
