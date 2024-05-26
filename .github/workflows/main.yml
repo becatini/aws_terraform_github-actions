@@ -33,7 +33,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
           role-session-name: TestSession
-          profile: master
+      
+      - name: Sts GetCallerIdentity
+        run: |
+          aws sts get-caller-identity
           
       # Action to check the code    
       - name: Checkout
