@@ -11,4 +11,5 @@ aws_project_tags = {
   Terraform   = "true"
   Environment = "dev"
   Project     = "eks"
+  Test     = "OK"
 }
